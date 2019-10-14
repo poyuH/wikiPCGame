@@ -3,17 +3,28 @@ import requests
 from datetime import datetime
 from collections import defaultdict
 import json
+import wikipedia
 
-# TODO instrument, music genre
+# TODO instrument, music genre, https://en.wikipedia.org/wiki/List_of_video_game_musicians
 
-# https://en.wikipedia.org/wiki/List_of_video_game_musicians
+# TODO  producer(name, nation, age)
 
-def crawl_developer_wikiList(url="https://en.wikipedia.org/wiki/List_of_video_game_developers"):
+# TODO create list of producers, composers, and then manually fill out the rest
+
+def _get_string_from_td(td):
+    try:
+        string = td.a.string
+    except:
+        string = td.string
+    return string
+
+
+def crawl_developer_wikiList(url="https://en.wikipedia.org/wiki/List_of_video_game_developers", save=False):
     # TODO developer (name, started, location)
     return
 
-def crawl_game_wikiList(url):
-    url = 'https://en.wikipedia.org/wiki/List_of_PC_games_(B)'
+
+def crawl_game_wikiList(url, save=False):
     soup = bs(requests.get(url).content, features='html.parser')
     count = 0
     d = {}
@@ -27,13 +38,12 @@ def crawl_game_wikiList(url):
                 string = td.string
                 d[string] = defaultdict(list)
             name = string
+            d[name]['description'] = wikipedia.summary(name)
         elif count % 6 == 1:
             try:
                 for a in td.findAll('a'):
                     d[name]['developer'].append(a.string)
             except:
-                print(d[name])
-                print(d[name]['developer'])
                 d[name]['developer'].append(td.string)
         elif count % 6 == 3:
             try:
@@ -48,17 +58,18 @@ def crawl_game_wikiList(url):
                 release_date = datetime.strptime(td.string[:-1], '%B %d, %Y')
             d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
         count += 1
-    """
-    with open(url[-20:] + '.json', 'w') as f:
-        json.dump(d, f)
-    """
+        if count == 18:
+            break
+    if save:
+        with open(url[-20:] + '.json', 'w') as f:
+            json.dump(d, f)
     print(d)
 
 
 def crawl_game_infobox(url):
     d = defaultdict(list)
-    soup = bs(requests.get("https://en.wikipedia.org" + url).content, features='html.parser')
-    # TODO game (description), producer(name, nation, age), developer (name, started, location)
+    r = requests.get("https://en.wikipedia.org" + url)
+    soup = bs(r.content, features='html.parser')
     info = soup.find('table', {'class':'infobox hproduct'})
     for tr in info.findAll('tr'):
         if tr.find('a'):
@@ -76,4 +87,9 @@ def crawl_game_infobox(url):
                 # d['developer'] = tr.find('td').string
     return d
 
-crawl_game_wikiList('/wiki/Dark_Souls')
+
+if __name__ == '__main__':
+    # crawl_game_infobox('/wiki/Dark_Sun:_Shattered_Lands')
+    # crawl_game_wikiList('https://en.wikipedia.org/wiki/List_of_PC_games_(B)')
+    # print(wikipedia.summary("Dark_Souls"))
+    crawl_developer_wikiList()
