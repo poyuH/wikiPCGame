@@ -68,15 +68,23 @@ def crawl_game_wikiList(url, save=False):
     d = {}
     for td in soup.findAll('table')[0].findAll('td'):
         if count % 6 == 0:
-            try:
+            if td.a:
                 string = td.a.string
+                print('try', string)
                 d[string] = defaultdict(list)
                 d[string].update(crawl_game_infobox(td.a.get('href')))
-            except:
+            else:
                 string = td.string
+                if not string:
+                    string = td.find('i').string
+                print('except', string)
                 d[string] = defaultdict(list)
             name = string
-            d[name]['description'] = wikipedia.summary(name)
+            try:
+                summary = wikipedia.summary(name)
+            except:
+                summary = None
+            d[name]['description'] = summary
         elif count % 6 == 1:
             try:
                 for a in td.findAll('a'):
@@ -89,26 +97,34 @@ def crawl_game_wikiList(url, save=False):
             except:
                 string = td.string
             d[name]['genre'] = string
+            if name in ("Baldur's Gate II: Throne of Bhaal",):
+                count += 1
         elif count % 6 == 5:
             try:
                 release_date = datetime.strptime(td.span['data-sort-value'][8:-5], '%Y-%m-%d')
+                d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
             except:
-                release_date = datetime.strptime(td.string[:-1], '%B %d, %Y')
-            d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
+                if td.string and td.string[:-1] != 'Cancelled' and len(td.string) != 4:
+                    release_date = datetime.strptime(td.string[:-1], '%B %d, %Y')
+                    d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
         count += 1
-        if count == 18:
-            break
     if save:
         with open(url[-20:] + '.json', 'w') as f:
             json.dump(d, f)
-    print(d)
 
 
 def crawl_game_infobox(url):
     d = defaultdict(list)
-    r = requests.get("https://en.wikipedia.org" + url)
+    try:
+        r = requests.get("https://en.wikipedia.org" + url)
+    except:
+        return d
     soup = bs(r.content, features='html.parser')
     info = soup.find('table', {'class':'infobox hproduct'})
+    if not info:
+        info = soup.find('table', {'class':'infobox'})
+    if not info:
+        return d
     for tr in info.findAll('tr'):
         if tr.find('a'):
             a = tr.find('a')
@@ -117,7 +133,6 @@ def crawl_game_infobox(url):
             elif a.get('title') == "Video game producer":
                 if tr.find('td').find('li'):
                     for li in tr.find('td').findAll('li'):
-                        print(li.string)
                         d['producer'].append(tr.find('td').string)
                 else:
                     d['producer'] = tr.find('td').string
