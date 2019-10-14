@@ -21,7 +21,45 @@ def _get_string_from_td(td):
 
 def crawl_developer_wikiList(url="https://en.wikipedia.org/wiki/List_of_video_game_developers", save=False):
     # TODO developer (name, started, location)
-    return
+    soup = bs(requests.get(url).content, features='html.parser')
+    count = 0
+    d = {}
+    for td in soup.findAll('tbody')[2].findAll('td'):
+        string = _get_string_from_td(td)
+        if count % 7 == 0:
+            d[string] = defaultdict(list)
+            name = string
+        elif count % 7 == 1:
+            d[name]['city'] = string
+        elif count % 7 == 3:
+            try:
+                d[name]['country'] = string[:-1]
+            except:
+                d[name]['country'] = None
+        elif count % 7 == 4:
+            try:
+                if string=='\n':
+                    d[name]['found_year'] = None
+                else:
+                    d[name]['found_year'] = int(string)
+            except:
+                print(name)
+                print(td)
+                string = input('your decision on found year:')
+                d[name]['found_year'] = int(string)
+        elif count % 7 == 5:
+            if name in ('Gaijin Entertainment', 'Asobo Studio', 'Epic Games', 'Nippon Ichi Software', 'Robot Entertainment', 'Robinson Technologies', 'Sherman3D'):
+                count += 1
+            try:
+                for a in td.findAll('a'):
+                    d[name]['notable_games'].append(a.string)
+            except:
+                d[name]['notable_games'].append(td.string)
+        count += 1
+    if save:
+        with open('vidio_game_developer.json', 'w') as f:
+            json.dump(d, f)
+    print(d)
 
 
 def crawl_game_wikiList(url, save=False):
