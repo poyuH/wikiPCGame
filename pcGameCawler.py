@@ -85,6 +85,8 @@ def crawl_game_wikiList(url, save=False):
             except:
                 summary = None
             d[name]['description'] = summary
+            if 'Red dead redemption\n' == string:
+                count -= 1
         elif count % 6 == 1:
             try:
                 for a in td.findAll('a'):
@@ -100,13 +102,18 @@ def crawl_game_wikiList(url, save=False):
             if name in ("Baldur's Gate II: Throne of Bhaal",):
                 count += 1
         elif count % 6 == 5:
+            if name in ("Resident Evil: Revelations 2", "Rocket League"):
+                count -= 1
             try:
                 release_date = datetime.strptime(td.span['data-sort-value'][8:-5], '%Y-%m-%d')
                 d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
             except:
-                if td.string and td.string[:-1] != 'Cancelled' and len(td.string) != 4:
-                    release_date = datetime.strptime(td.string[:-1], '%B %d, %Y')
-                    d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
+                if td.string:
+                    try:
+                        release_date = datetime.strptime(td.string[:-1], '%B %d, %Y')
+                        d[name]['date_release'] = datetime.date(release_date).strftime('%Y-%m-%d')
+                    except:
+                        d[name]['date_release'] = None
         count += 1
     if save:
         with open(url[-20:] + '.json', 'w') as f:
