@@ -172,7 +172,18 @@ def insert_musicgenre():
     for mgenre in ['Rock', 'Electronic', 'Soul/R&B', 'Funk', 'Country', 'Reggae', 'Classical']:
         values.append((mgenre, ))
     insert_tuple(table, columns, value_form, values)
+
+def insert_player():
+    table = 'player'
+    columns = 'account, name, age, country, email'
+    value_form = "(%s, %s, %s, %s, %s)"
+    values = []
+    for i in range(10):
+        values.append(('test%s' % str(i), str(i), 18+i, 'Taiwan', 'test%s@gamil.com' % str(i)))
+    insert_tuple(table, columns, value_form, values)
+
     return
 
+
 if __name__ == '__main__':
-    insert_musicgenre()
+    insert_player()
