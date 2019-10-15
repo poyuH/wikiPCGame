@@ -12,7 +12,10 @@ def insert_tuple(table, columns, value_form, values, pw):
         try:
             cur.execute(sql, v)
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            if type(error) is not psycopg2.errors.UniqueViolation and\
+                    type(error) is not psycopg2.errors.NotNullViolation:
+                print(type(error))
+                print(error)
         conn.commit()
     cur.close
     conn.close()
@@ -23,8 +26,8 @@ def read_list(path):
     return d
 
 def escape_quotation(s):
-    if not s:
-        return s
+    if not s or len(s) == 0 or type(s) is not str:
+        return None
     new_s = ''
     for char in s:
         if char == '\'':
@@ -61,5 +64,115 @@ def insert_developers():
         values.append((dname, date, escape_quotation(d[dname]['city'])))
     insert_tuple(table, columns, value_form, values)
 
-if __name__ == '__main__':
+def insert_produce():
+    table = 'produce'
+    columns = 'gname, dname'
+    value_form = "(%s, %s)"
+    path = 'List_of_PC_games_(%s).json' % 'Numerical'
+    d = read_list(path)
+    values = []
+    for name in d:
+        values.append((escape_quotation(name), escape_quotation(d[name].get('developer'))))
+    insert_tuple(table, columns, value_form, values)
+    for char in 'QWERTYUIOPASDFGHJKLZXCVBNM':
+        path = 'List_of_PC_games_(%s).json' % char
+        d = read_list(path)
+        values = []
+        for name in d:
+            price = random.random() * 40.0
+            values.append((escape_quotation(name), escape_quotation(d[name].get('developer'))))
+        insert_tuple(table, columns, value_form, values)
+
+def insert_composer():
+    table = 'composer'
+    columns = 'cname'
+    value_form = "(%s)"
+    path = 'List_of_PC_games_(%s).json' % 'Numerical'
+    d = read_list(path)
+    values = []
+    for name in d:
+        values.append((escape_quotation(d[name].get('composer')),))
+    insert_tuple(table, columns, value_form, values)
+    for char in 'QWERTYUIOPASDFGHJKLZXCVBNM':
+        path = 'List_of_PC_games_(%s).json' % char
+        d = read_list(path)
+        values = []
+        for name in d:
+            values.append((escape_quotation(d[name].get('composer')), ))
+        insert_tuple(table, columns, value_form, values)
+
+def insert_dub():
+    table = 'dub'
+    columns = 'gname, cname'
+    value_form = "(%s, %s)"
+    path = 'List_of_PC_games_(%s).json' % 'Numerical'
+    d = read_list(path)
+    values = []
+    for name in d:
+        values.append((name, escape_quotation(d[name].get('composer'))))
+    insert_tuple(table, columns, value_form, values)
+    for char in 'QWERTYUIOPASDFGHJKLZXCVBNM':
+        path = 'List_of_PC_games_(%s).json' % char
+        d = read_list(path)
+        values = []
+        for name in d:
+            values.append((name, escape_quotation(d[name].get('composer'))))
+        insert_tuple(table, columns, value_form, values)
+
+def insert_producer():
+    table = 'producer'
+    columns = 'pname'
+    value_form = "(%s)"
+    path = 'List_of_PC_games_(%s).json' % 'Numerical'
+    d = read_list(path)
+    values = []
+    for name in d:
+        values.append((escape_quotation(d[name].get('producer')), ))
+    insert_tuple(table, columns, value_form, values)
+    for char in 'QWERTYUIOPASDFGHJKLZXCVBNM':
+        path = 'List_of_PC_games_(%s).json' % char
+        d = read_list(path)
+        values = []
+        for name in d:
+            values.append((escape_quotation(d[name].get('producer')), ))
+        insert_tuple(table, columns, value_form, values)
+
+def insert_notablework():
+    table = 'notablework'
+    columns = 'gname, pname'
+    value_form = "(%s, %s)"
+    path = 'List_of_PC_games_(%s).json' % 'Numerical'
+    d = read_list(path)
+    values = []
+    for name in d:
+        values.append((name, escape_quotation(d[name].get('producer'))))
+    insert_tuple(table, columns, value_form, values)
+    for char in 'QWERTYUIOPASDFGHJKLZXCVBNM':
+        path = 'List_of_PC_games_(%s).json' % char
+        d = read_list(path)
+        values = []
+        for name in d:
+            values.append((name, escape_quotation(d[name].get('producer'))))
+        insert_tuple(table, columns, value_form, values)
+
+def insert_instrument():
+    table = 'instrument'
+    columns = 'iname'
+    value_form = "(%s)"
+    values = []
+    for iname in ['piano', 'guitar', 'violin', 'flute', 'drum']:
+        values.append((iname, ))
+    insert_tuple(table, columns, value_form, values)
+
+def insert_musicgenre():
+    table = 'musicgenre'
+    columns = 'mgenre'
+    value_form = "(%s)"
+    values = []
+    for mgenre in ['Rock', 'Electronic', 'Soul/R&B', 'Funk', 'Country', 'Reggae', 'Classical']:
+        values.append((mgenre, ))
+    insert_tuple(table, columns, value_form, values)
     return
+
+if __name__ == '__main__':
+    insert_musicgenre()
