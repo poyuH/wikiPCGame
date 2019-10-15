@@ -3,7 +3,7 @@ import json
 import random
 
 
-def insert_tuple(table, columns, value_form, values, pw='5882'):
+def insert_tuple(table, columns, value_form, values, pw):
     conn = psycopg2.connect(host='35.243.220.243', database='proj1part2', user='ph2587', password=pw)
     cur = conn.cursor()
     for v in values:
