@@ -2,6 +2,9 @@ import psycopg2
 import json
 import random
 
+MGENGRES = ['Rock', 'Electronic', 'Soul/R&B', 'Funk', 'Country', 'Reggae', 'Classical']
+INSTRUMENTS = ['piano', 'guitar', 'violin', 'flute', 'drum']
+PAYMENTS = ['money', 'cheque', 'debit', 'credit', 'bank transfers']
 
 def insert_tuple(table, columns, value_form, values, pw):
     conn = psycopg2.connect(host='35.243.220.243', database='proj1part2', user='ph2587', password=pw)
@@ -17,6 +20,34 @@ def insert_tuple(table, columns, value_form, values, pw):
                 print(type(error))
                 print(error)
         conn.commit()
+    cur.close
+    conn.close()
+
+def read_tuple(query, pw):
+    conn = psycopg2.connect(host='35.243.220.243', database='proj1part2', user='ph2587', password=pw)
+    cur = conn.cursor()
+    rows = []
+    try:
+        cur.execute(query)
+        rows = cur.fetchall()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    cur.close()
+    conn.close()
+    return rows
+
+def update_tuple(table, value_col, value, condition_col, condition, pw):
+    conn = psycopg2.connect(host='35.243.220.243', database='proj1part2', user='ph2587', password=pw)
+    cur = conn.cursor()
+    sql = 'UPDATE %s SET %s=' % (table, value_col)
+    sql += '%s'
+    sql += 'WHERE %s=' % condition_col
+    sql += '%s'
+    try:
+        cur.execute(sql, (value, condition))
+    except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+    conn.commit()
     cur.close
     conn.close()
 
@@ -160,7 +191,7 @@ def insert_instrument():
     columns = 'iname'
     value_form = "(%s)"
     values = []
-    for iname in ['piano', 'guitar', 'violin', 'flute', 'drum']:
+    for iname in INSTRUMENTS:
         values.append((iname, ))
     insert_tuple(table, columns, value_form, values)
 
@@ -169,7 +200,7 @@ def insert_musicgenre():
     columns = 'mgenre'
     value_form = "(%s)"
     values = []
-    for mgenre in ['Rock', 'Electronic', 'Soul/R&B', 'Funk', 'Country', 'Reggae', 'Classical']:
+    for mgenre in MGENGRES:
         values.append((mgenre, ))
     insert_tuple(table, columns, value_form, values)
 
@@ -182,8 +213,61 @@ def insert_player():
         values.append(('test%s' % str(i), str(i), 18+i, 'Taiwan', 'test%s@gamil.com' % str(i)))
     insert_tuple(table, columns, value_form, values)
 
-    return
+def insert_canplay_hasperformed(is_canplay):
+    cnames = read_tuple('SELECT c.cname FROM composer c')
+    if is_canplay:
+        table = 'canplay'
+        columns = 'cname, iname'
+        choices = INSTRUMENTS
+    else:
+        table = 'hasperformed'
+        columns = 'cname, mgenre'
+        choices = MGENGRES
+    value_form = "(%s, %s)"
+    values = []
+    for cname in cnames:
+        values.append((cname, random.choice(choices)))
+    insert_tuple(table, columns, value_form, values)
+
+def insert_attend_transaction():
+    table = 'attend_transaction'
+    columns = 'tid, timestamp, account, payment '
+    value_form = "(%s, %s, %s, %s)"
+    values = []
+    for i in range(10):
+        values.append((str(i), '2019-10-%s'% (i+9), 'test%s' % str(i), random.choice(PAYMENTS)))
+    insert_tuple(table, columns, value_form, values)
+
+def insert_contain():
+    table = 'contain'
+    columns = 'tid, gname'
+    value_form = "(%s, %s)"
+    values = []
+    gnames = read_tuple('SELECT g.gname FROM game g')
+    for i in range(10):
+        values.append((str(i), random.choice(gnames)))
+        if i < 6:
+            values.append((str(i), random.choice(gnames)))
+    insert_tuple(table, columns, value_form, values)
+
+def update_price():
+    table = 'attend_transaction'
+    tuples = read_tuple('SELECT c.tid, sum(g.price) FROM contain c, game g WHERE g.gname=c.gname GROUP BY c.tid')
+    for tid, price in tuples:
+        update_tuple(table, 'price', price, 'tid', tid)
+
+def insert_wish_list():
+    accounts = read_tuple('SELECT p.account from player p')
+    gnames = read_tuple('SELECT g.gname from game g')
+    table = 'wish_list'
+    columns = 'gname, account'
+    values = []
+    value_form = '(%s, %s)'
+    for account in accounts:
+        values.append((random.choice(gnames), account))
+    insert_tuple(table, columns, value_form, values)
+
 
 
 if __name__ == '__main__':
-    insert_player()
+    insert_wish_list()
