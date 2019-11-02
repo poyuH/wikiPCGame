@@ -1,29 +1,43 @@
-<html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
+{% extends "base.html" %}
 
+{% block head %}
+<title>PC Game Shop</title>
+<script>
+    window.onload = function() {
+        var button_index = document.getElementById('index');
+        var button_search = document.getElementById('search');
+        if (window.location.href.slice(-6) != "search"){
+            button_search.style.display = "none";
+            button_index.style.display = "block";
+        }
+        else {
+            button_search.style.display = "block";
+            button_index.style.display = "none";
+        }
+    };
+</script>
+{% endblock %}
+{% block body %}
+    <h1>PC Game Shop</h1>
+    <form method="POST" action="/search">
+    <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
+    </form>
+    <div>{{data}}</div>
 
-<body>
-  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
+    <div>
+      {% for n in data %}
+      <div>{{n}}</div>
+      {% endfor %}
+    </div>
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+    <div id="index">
+        <button type="button"><a href="{{next_page}}">Next Page</a></button>
+        {% if previous_page >= 0 %}
+            <button type="button"><a href="{{previous_page}}">Previous Page</a></button>
+        {% endif %}
+        <p>Page {{next_page}}</p>
+    </div>
+    <div id="search">
+        <button type="button"><a href="/0">Return To Home</a></button>
 
-<p><a href="another">Go to the other page</a></p>
-
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
-
-</body>
-
-
-</html>
+{% endblock %}
