@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-<title>PC Game Shop</title>
 <script>
     window.onload = function() {
         var button_index = document.getElementById('index');
@@ -16,7 +14,6 @@
         }
     };
 </script>
-{% endblock %}
 {% block body %}
     <h1>PC Game Shop</h1>
     <form method="POST" action="/search">
@@ -37,5 +34,6 @@
     </div>
     <div id="search">
         <button type="button"><a href="/0">Return To Home</a></button>
+    </div>
 
 {% endblock %}
