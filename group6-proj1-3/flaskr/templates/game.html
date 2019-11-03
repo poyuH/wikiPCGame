@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>{{gname}}</h1>
+    <form method="POST" action="/search">
+    <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
+    </form>
+    <p>Genre: {{genre}}</p>
+    <p>Publish Date: {{date}}</p>
+    <p>Price: {{price}}</p>
+    <div>{{description}}</div>
+
+    <button type="button"><a href="/0">Return To Home</a></button>
+
+{% endblock %}

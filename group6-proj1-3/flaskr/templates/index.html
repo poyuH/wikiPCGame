@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 
+{% block body %}
 <script>
     window.onload = function() {
         var button_index = document.getElementById('index');
         var button_search = document.getElementById('search');
+        var page = document.getElementById('page');
         if (window.location.href.slice(-6) != "search"){
             button_search.style.display = "none";
             button_index.style.display = "block";
+            page.style.display = "block";
         }
         else {
             button_search.style.display = "block";
             button_index.style.display = "none";
+            page.style.display = "none";
         }
     };
 </script>
-{% block body %}
     <h1>PC Game Shop</h1>
     <form method="POST" action="/search">
     <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
@@ -30,6 +33,8 @@
         {% if previous_page >= 0 %}
             <button type="button"><a href="{{previous_page}}">Previous Page</a></button>
         {% endif %}
+    </div>
+    <div id="page">
         <p>Page {{next_page}}</p>
     </div>
     <div id="search">

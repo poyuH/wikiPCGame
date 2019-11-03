@@ -7,3 +7,8 @@ class Game(Enum):
     DATE = 'date'
     PRICE = 'price'
 
+class Developer(Enum):
+    DNAME = 'dname'
+    LOCATION = 'location'
+    STARTED = 'started'
+

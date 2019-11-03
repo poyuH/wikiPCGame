@@ -1,9 +1,7 @@
 import os
 # accessible as a variable in index.html:
 from flask import Flask, request, render_template, redirect, Response
-from . import db
-from . import index
-from . import game
+from . import db, index, game, developer
 
 
 def create_app(test_config=None):
@@ -28,6 +26,7 @@ def create_app(test_config=None):
     app.register_blueprint(index.bp)
     app.add_url_rule('/', endpoint='index')
     app.register_blueprint(game.bp)
+    app.register_blueprint(developer.bp)
 
     return app
 
