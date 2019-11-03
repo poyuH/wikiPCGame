@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, render_template, redirect, Response
 from . import db
 from . import index
+from . import game
 
 
 def create_app(test_config=None):
@@ -26,6 +27,7 @@ def create_app(test_config=None):
     # register home page as blueprint
     app.register_blueprint(index.bp)
     app.add_url_rule('/', endpoint='index')
+    app.register_blueprint(game.bp)
 
     return app
 

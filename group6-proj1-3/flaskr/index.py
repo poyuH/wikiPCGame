@@ -1,9 +1,11 @@
 import functools
 from sqlalchemy import text
+from urllib.parse import quote, unquote
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from . import db
+from .global_values import Game
 
 bp = Blueprint('index', __name__)
 my_db = db
@@ -25,11 +27,13 @@ def home_page(page_num=0, query=None):
         cursor = conn.execute("SELECT gname FROM game ORDER BY date LIMIT 10 OFFSET %s;" % (10*page_num))
     else:
         cursor = conn.execute(text(query))
-    names = []
+    name_urls = []
     for result in cursor:
-      names.append(result['gname'])
+        name_urls.append((result[Game.GNAME.value], '/game/' + quote(result[Game.GNAME.value])))
     cursor.close()
-    context = dict(data = names)
+    context = {}
+    context['name_urls'] = name_urls
+    print(name_urls)
     context['next_page'] = page_num + 1
     context['previous_page'] = page_num - 1
     return render_template("index.html", **context)

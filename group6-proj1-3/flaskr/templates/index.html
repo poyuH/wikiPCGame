@@ -22,11 +22,9 @@
     <form method="POST" action="/search">
     <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
     </form>
-    <div>{{data}}</div>
-
     <div>
-      {% for n in data %}
-      <div>{{n}}</div>
+      {% for n in name_urls %}
+      <div><a href={{n[1]}}>{{n[0]}}</a></div>
       {% endfor %}
     </div>
 
