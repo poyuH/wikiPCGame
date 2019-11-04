@@ -1,7 +1,7 @@
 import os
 # accessible as a variable in index.html:
 from flask import Flask, request, render_template, redirect, Response
-from . import db, index, game, developer, producer
+from . import db, index, game, developer, producer, composer
 
 
 def create_app(test_config=None):
@@ -28,6 +28,7 @@ def create_app(test_config=None):
     app.register_blueprint(game.bp)
     app.register_blueprint(developer.bp)
     app.register_blueprint(producer.bp)
+    app.register_blueprint(composer.bp)
 
     return app
 

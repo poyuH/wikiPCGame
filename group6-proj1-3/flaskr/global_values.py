@@ -16,3 +16,8 @@ class Producer(Enum):
     PNAME = 'pname'
     NATION = 'nation'
     AGE = 'age'
+
+class Composer(Enum):
+    CNAME = 'cname'
+    INAME = 'iname'
+    MUSIC_GENRE = 'mgenre'

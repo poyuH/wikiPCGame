@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>{{cname}}</h1>
+    <form method="POST" action="/search">
+    <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
+    </form>
+    <p>Composer: {{cname}}</p>
+    <p>Music genre</p>
+    {% for m in mgenre %}
+    <li>{{m}}</li>
+    {% endfor %}
+    <p>Instrument</p>
+    {% for i in iname %}
+    <li>{{i}}</li>
+    {% endfor %}
+    <p>DUB games:</p>
+    {% for gname, g_url in games %}
+    <div><a href={{g_url}}>{{gname}}</a></div>
+    {% endfor %}
+
+    <button type="button"><a href="/0">Return To Home</a></button>
+
+{% endblock %}

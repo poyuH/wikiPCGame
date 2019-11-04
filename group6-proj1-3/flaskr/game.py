@@ -5,7 +5,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from . import db
-from .global_values import Game, Producer, Developer
+from .global_values import Game, Producer, Developer, Composer
 
 bp = Blueprint('game', __name__, url_prefix='/game')
 my_db = db
@@ -41,11 +41,10 @@ def game_page(game_url):
         if tmp:
             context[Producer.PNAME.value] = tmp[Producer.PNAME.value]
             context['producer_url'] = "/../producer/" + quote(tmp[Producer.PNAME.value])
-        """
-        tmp = conn.execute("SELECT d.cname FROM game g, dub d WHERE n.gname=d.gname AND g.gname='%s'" % gname).fetchone()
+        tmp = conn.execute("SELECT d.cname FROM game g, dub d WHERE g.gname=d.gname AND g.gname='%s'" % gname).fetchone()
         if tmp:
             context[Composer.CNAME.value] = tmp[Composer.CNAME.value]
-        """
+            context['composer_url'] = "/../composer/" + quote(tmp[Composer.CNAME.value])
         print(result)
     cursor.close()
     return render_template("game.html", **context)
