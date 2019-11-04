@@ -12,3 +12,7 @@ class Developer(Enum):
     LOCATION = 'location'
     STARTED = 'started'
 
+class Producer(Enum):
+    PNAME = 'pname'
+    NATION = 'nation'
+    AGE = 'age'

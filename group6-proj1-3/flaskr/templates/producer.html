@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>{{gname}}</h1>
+    <h1>{{dname}}</h1>
     <form method="POST" action="/search">
     <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
     </form>
-    <p>Genre: {{genre}}</p>
-    <p>Publish Date: {{date}}</p>
-    <p>Price: {{price}}</p>
-    <p>Developer: <a href={{developer_url}}>{{dname}}</a></p>
-    <p>Producer: <a href={{producer_url}}>{{pname}}</a></p>
-    <div>{{description}}</div>
+    <p>Producer: {{pname}}</p>
+    <p>Published games:</p>
+    {% for gname, g_url in games %}
+    <div><a href={{g_url}}>{{gname}}</a></div>
+    {% endfor %}
 
     <button type="button"><a href="/0">Return To Home</a></button>
 
