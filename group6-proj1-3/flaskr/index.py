@@ -21,6 +21,7 @@ def teardown_request(exception):
     my_db.close(exception)
 
 @bp.route('/<int:page_num>', methods=('GET', 'POST'))
+@bp.route('/', methods=('GET', 'POST'))
 def home_page(page_num=0, query=None):
     conn = my_db.get_conn()
     if not query:
