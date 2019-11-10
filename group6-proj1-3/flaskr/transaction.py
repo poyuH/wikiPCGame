@@ -10,7 +10,6 @@ from flaskr.auth import login_required
 
 bp = Blueprint('transaction', __name__, url_prefix='/transaction_history')
 my_db = db
-# TODO add to wish list
 
 # connects to our database
 @bp.before_request

@@ -10,7 +10,6 @@ from flaskr.auth import login_required
 
 bp = Blueprint('game', __name__, url_prefix='/game')
 my_db = db
-# TODO add to wish list
 
 # connects to our database
 @bp.before_request
@@ -54,24 +53,21 @@ def game_page(game_url):
 @login_required
 def add_to_wishlist(gname):
     conn = my_db.get_conn()
-    cursor = conn.execute("SELECT * FROM Wish_List W WHERE W.account = '%s' AND W.gname = '%s'" % (g.user, gname)).fetchone()
-    if cursor:
-        pass
-    else:
+    in_wish = conn.execute("SELECT * FROM Wish_List W WHERE W.account = '%s' AND W.gname = '%s'" % (g.user, gname)).fetchone()
+    if not in_wish:
         cursor = conn.execute("INSERT INTO Wish_List (account, gname) VALUES ('%s', '%s')" % (g.user, gname))
-    cursor.close()
+        cursor.close()
     return redirect(url_for('wishlist.index'))
 
 @bp.route('/<string:gname>remove_from_wishlist', methods=('POST',))
 @login_required
 def remove_from_wishlist(gname):
     conn = my_db.get_conn()
-    cursor = conn.execute("SELECT * FROM Wish_List W WHERE W.account = '%s' AND W.gname = '%s'" % (g.user, gname)).fetchone()
-    if cursor:
+    in_wish = conn.execute("SELECT * FROM Wish_List W WHERE W.account = '%s' AND W.gname = '%s'" % (g.user, gname)).fetchone()
+    if in_wish:
         print('i delete')
         cursor = conn.execute("DELETE FROM Wish_List WHERE account='%s' AND gname='%s'" % (g.user, gname))
+        cursor.close()
     else:
         print('i do not delete')
-        pass
-    cursor.close()
     return redirect(url_for('wishlist.index'))
