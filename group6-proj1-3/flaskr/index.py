@@ -37,9 +37,20 @@ def home_page(page_num=0, query=None):
                                   FROM game g, wish_list w
                                   WHERE g.gname=w.gname AND w.account='%s')
                                   ORDER BY date LIMIT 10 OFFSET %s;
-                                  """ % (g.user, g.user, (10*page_num)))
+                                  """ % (g.user, g.user, 10*page_num))
             if cursor.rowcount == 0:
-                cursor = conn.execute("SELECT gname FROM game ORDER BY date LIMIT 10 OFFSET %s;" % (10*page_num))
+                cursor = conn.execute("""
+                                      SELECT gname FROM game WHERE genre NOT IN (
+                                      SELECT g.genre
+                                      FROM game g, attend_transaction a, contain c
+                                      WHERE g.gname=c.gname AND c.tid=a.tid AND a.account='%s')
+                                      AND
+                                      genre NOT IN(
+                                      SELECT g.genre
+                                      FROM game g, wish_list w
+                                      WHERE g.gname=w.gname AND w.account='%s')
+                                      ORDER BY date LIMIT 10 OFFSET %s;
+                                      """ % (g.user, g.user, 10*page_num))
         else:
             cursor = conn.execute("SELECT gname FROM game ORDER BY date LIMIT 10 OFFSET %s;" % (10*page_num))
     else:
