@@ -29,6 +29,9 @@ def transaction(tid):
     tid = tid
     context = {}
     cursor = conn.execute("SELECT * FROM Attend_Transaction T WHERE T.tid='%s' AND T.account='%s'" % (tid, g.user))
+    if cursor.rowcount == 0:
+        cursor.close()
+        return redirect("/")
     for result in cursor:
         context[Transaction.TID.value] = result[Transaction.TID.value]
         context[Transaction.PRICE.value] = result[Transaction.PRICE.value]
@@ -38,7 +41,7 @@ def transaction(tid):
         tmp = conn.execute("SELECT C.gname FROM Contain C WHERE C.tid='%s'" % tid)
         name_urls = []
         for t in tmp:
-            name_urls.append((t[Contain.GNAME.value], '/game/' + quote(t[Contain.GNAME.value]))) 
+            name_urls.append((t[Contain.GNAME.value], '/game/' + quote(t[Contain.GNAME.value])))
         context['name_urls'] = name_urls
     cursor.close()
     return render_template("transaction.html", **context)
