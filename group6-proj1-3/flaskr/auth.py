@@ -36,6 +36,8 @@ def register():
             error = 'Email is required.'
         elif conn.execute("SELECT account FROM Player P WHERE P.account = '%s'" % username).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
+        elif conn.execute("SELECT email FROM Player P WHERE P.email = '%s'" % email).fetchone() is not None:
+            error = 'Email {} is already registered.'.format(email)
 
         if error is None:
             conn.execute("INSERT INTO Player (account, email) VALUES ('%s', '%s')" % (username, email))
