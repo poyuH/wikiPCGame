@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block content %}
+  <form action="{{ url_for('game.add_to_wishlist', gname=gname) }}" method="post">
+    <input class="danger" type="submit" value="Add to WishList" onclick="return confirm('Are you sure?');">
+  </form>
+  <form action="{{ url_for('game.remove_from_wishlist', gname=gname) }}" method="post">
+    <input class="danger" type="submit" value="Remove from WishList" onclick="return confirm('Are you sure?');">
+  </form>
+{% endblock %}
+
 {% block body %}
     <h1>{{gname}}</h1>
     <form method="POST" action="/search">

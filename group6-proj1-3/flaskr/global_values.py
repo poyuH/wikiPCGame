@@ -21,3 +21,18 @@ class Composer(Enum):
     CNAME = 'cname'
     INAME = 'iname'
     MUSIC_GENRE = 'mgenre'
+
+class Wish_List(Enum):
+    GNAME = 'gname'
+    ACCOUNT = 'account'
+
+class Transaction(Enum):
+    TID = 'tid'
+    PRICE = 'price'
+    TIMESTAMP = 'timestamp'
+    ACCOUNT = 'account'
+    PAYMENT = 'payment'
+
+class Contain(Enum):
+    GNAME = 'gname'
+    TID = 'tid'

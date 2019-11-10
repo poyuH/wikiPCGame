@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Your Transaction History</h1>
+    <div>
+      {% for n in name_urls %}
+      <div><a href={{n[1]}}>Transaction ID {{n[0]}}</a></div>
+      {% endfor %}
+    </div>
+
+    <div id="search">
+        <button type="button"><a href="/0">Return To Home</a></button>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+    <h1>Your Wishlist</h1>
+    <div>
+      {% for n in name_urls %}
+        <div><a href={{n[1]}}>{{n[0]}}</a></div>
+      {% endfor %}
+    </div>
+    
+    {% if name_urls %}
+      <button type="button"><a class="action" href="{{url_for('wishlist.checkout')}}">Checkout</a></button>
+    {% endif %}
+    <div>
+      <button type="button"><a href="/0">Return To Home</a></button>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Transaction ID: {{tid}}</h1>
+    <p>Timestamp: {{timestamp}}</p>
+    <p>Price: {{price}}</p>
+    <p>Payment: {{payment}}</p>
+    <p>Purchase Content: </p>
+    <div>
+      {% for n in name_urls %}
+        <div><a href={{n[1]}}>{{n[0]}}</a></div>
+      {% endfor %}
+    </div>
+
+    <button type="button"><a href="/0">Return To Home</a></button>
+
+{% endblock %}

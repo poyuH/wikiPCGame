@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Checkout{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="title">Payment</label>
+    <select class="form-control" required id="payment" name="payment">
+      <option value="money">money</option>
+      <option value="cheque">cheque</option>
+      <option value="debit">debit</option>
+      <option value="credit">credit</option>
+      <option value="bank transfers">bank transfers</option>
+    </select>
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}
