@@ -22,6 +22,9 @@
     <form method="POST" action="/search">
       <p>Search <input type="text" name="name"> <input type="submit" value="search"></p>
     </form>
+
+    <FONT SIZE=5><B><a href="{{ url_for('top10.top10') }}">10 Best Sold Games</a></B></FONT>
+
     <div>
       {% for n in name_urls %}
       <div><a href={{n[1]}}>{{n[0]}}</a></div>

@@ -1,7 +1,7 @@
 import os
 # accessible as a variable in index.html:
 from flask import Flask, request, render_template, redirect, Response
-from . import db, index, game, developer, producer, composer, wishlist, transaction_history, transaction
+from . import db, index, game, developer, producer, composer, wishlist, transaction_history, transaction, top10
 
 
 def create_app(test_config=None):
@@ -35,6 +35,7 @@ def create_app(test_config=None):
     app.register_blueprint(wishlist.bp)
     app.register_blueprint(transaction_history.bp)
     app.register_blueprint(transaction.bp)
+    app.register_blueprint(top10.bp)
 
     # 2019/11/8
     from . import auth

@@ -24,6 +24,7 @@ def teardown_request(exception):
 @bp.route('/', methods=('GET', 'POST'))
 def home_page(page_num=0, query=None):
     conn = my_db.get_conn()
+    recommend = False
     if not query:
         if g.user:
             cursor = conn.execute("""
@@ -39,7 +40,8 @@ def home_page(page_num=0, query=None):
                                   ORDER BY date LIMIT 10 OFFSET %s;
                                   """ % (g.user, g.user, (10*page_num)))
             if cursor.rowcount == 0:
-                cursor = conn.execute("SELECT gname FROM game ORDER BY date LIMIT 10 OFFSET %s;" % (10*page_num))
+                recommend = True
+                #cursor = conn.execute("SELECT gname FROM game ORDER BY date LIMIT 10 OFFSET %s;" % (10*page_num))
         else:
             cursor = conn.execute("SELECT gname FROM game ORDER BY date LIMIT 10 OFFSET %s;" % (10*page_num))
     else:
@@ -47,6 +49,21 @@ def home_page(page_num=0, query=None):
     name_urls = []
     for result in cursor:
         name_urls.append((result[Game.GNAME.value], '/game/' + quote(result[Game.GNAME.value])))
+    if recommend:
+        cursor = conn.execute("""
+                                  SELECT gname FROM game WHERE genre NOT IN (
+                                  SELECT g.genre
+                                  FROM game g, attend_transaction a, contain c
+                                  WHERE g.gname=c.gname AND c.tid=a.tid AND a.account='%s')
+                                  AND
+                                  genre NOT IN(
+                                  SELECT g.genre
+                                  FROM game g, wish_list w
+                                  WHERE g.gname=w.gname AND w.account='%s')
+                                  ORDER BY date LIMIT 10 OFFSET %s;
+                                  """ % (g.user, g.user, (10*page_num)))
+        for result in cursor:
+            name_urls.append((result[Game.GNAME.value], '/game/' + quote(result[Game.GNAME.value])))
     cursor.close()
     context = {}
     context['name_urls'] = name_urls
