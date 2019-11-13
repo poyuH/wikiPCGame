@@ -24,6 +24,7 @@ def teardown_request(exception):
 @bp.route('/', methods=('GET', 'POST'))
 def home_page(page_num=0, query=None):
     conn = my_db.get_conn()
+    recommend = False
     if not query:
         if g.user:
             cursor = conn.execute("""
@@ -61,7 +62,6 @@ def home_page(page_num=0, query=None):
     cursor.close()
     context = {}
     context['name_urls'] = name_urls
-    print(name_urls)
     context['next_page'] = page_num + 1
     context['previous_page'] = page_num - 1
     return render_template("index.html", **context)

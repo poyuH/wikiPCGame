@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+    <h1>PC Game Shop</h1>
+    <h2>10 Best Sold Games</h2>
+    <div>
+      {% for n in name_urls %}
+      <div><a href={{n[1]}}>{{n[0]}}</a></div>
+      {% endfor %}
+    </div>
+
+    
+    <button type="button"><a href="/0">Return To Home</a></button>
+    
+
+{% endblock %}
