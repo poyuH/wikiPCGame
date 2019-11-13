@@ -28,20 +28,31 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
+        country = request.form['country']
+        age = int(request.form['age'])
+        name = request.form['name']
+        pw = request.form['password']
+
         error = None
 
         if not username:
             error = 'Username is required.'
         elif not email:
             error = 'Email is required.'
+        elif not pw:
+            error = 'Password is required.'
+        elif age < 18:
+            error = 'Needs to be older than 18 years old.'
         elif conn.execute("SELECT account FROM Player P WHERE P.account = '%s'" % username).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
         elif conn.execute("SELECT email FROM Player P WHERE P.email = '%s'" % email).fetchone() is not None:
             error = 'Email {} is already registered.'.format(email)
 
         if error is None:
-            conn.execute("INSERT INTO Player (account, email) VALUES ('%s', '%s')" % (username, email))
-            #conn.commit()
+            conn.execute("""
+                         INSERT INTO Player (account, email,  name, age, country, password)
+                         VALUES ('%s', '%s', '%s', '%i', '%s', '%s')
+                         """ % (username, email, name, age, country, pw))
             return redirect(url_for('auth.login'))
 
         flash(error)
@@ -52,12 +63,15 @@ def register():
 def login():
     if request.method == 'POST':
         username = request.form['username']
+        pw = request.form['password']
         conn = my_db.get_conn()
         error = None
         user = conn.execute("SELECT * FROM Player P WHERE P.account = '%s'" % username).fetchone()
 
         if user is None:
             error = 'Incorrect username.'
+        elif pw != conn.execute("SELECT password FROM Player WHERE account='%s'" % username).fetchone()[0]:
+            error = 'Incorrect password.'
 
         if error is None:
             session.clear()
@@ -71,13 +85,13 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    
+
     if user_id is None:
         g.user = None
     else:
         #g.user = conn.execute("SELECT account FROM Player P WHERE P.account = '%s'" % user_id).fetchone()
         g.user = user_id
-    
+
 
 @bp.route('/logout')
 def logout():
